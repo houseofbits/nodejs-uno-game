@@ -25,17 +25,21 @@
                     y:(10 - (Math.random()*20)),
                     angle:(10 - (Math.random()*20))
                 });
-            }
+            }         
         },
         watch: {
             data: function(newVal, oldVal) {
-                let newItems = newVal.filter(x => !oldVal.includes(x));
-                for(let i=0; i<newItems.length; i++){
-                    this.addCard(newItems[i]);
+
+                if(typeof this.cards[0] === 'undefined' 
+                    || newVal[0] !== oldVal[0]
+                    || oldVal.length > newVal.length){
+                    this.cards = [];
                 }
-                while(this.cards.length > newVal.length){
-                    this.cards.shift();
-                }                
+                for(let i=0;i<newVal.length; i++){
+                    if(typeof this.cards[i] === 'undefined' || this.cards[i].type !== newVal[i]){
+                       this.addCard(newVal[i]); 
+                    }
+                }               
             }
         },
         mounted:function(){
@@ -49,7 +53,7 @@
 <style scoped>
     .discard-pos{
         position:absolute;
-        top:160px;
+        top:150px;
         left:340px;
     }
 </style>

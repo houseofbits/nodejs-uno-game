@@ -12,5 +12,6 @@ module.exports = class PublicUNOClient {
         this.cardsCount = unoClient.getCardsCount();
         this.hasWon = unoClient.getHasWon();
         this.score = unoClient.getScore();
+        this.takeOrLeave = unoClient.getTakeOrLeave();        
     }
 };

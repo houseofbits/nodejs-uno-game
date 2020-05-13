@@ -17,9 +17,9 @@
 
                 <Opponent v-for="(oppo, index) in opponents" :data="oppo" :position="getOpponentPosition(index)" :key="index"></Opponent>
 
-                <Popup v-if="state.game.winner" type="win" :message="state.game.winner + ' won!'" :showButton="!state.client.ready" buttonText="Next round" :buttonHandler="ready"></Popup>
+                <Popup v-if="state.game.winner" type="win" icon="paper-plane" :message="state.game.winner + ' won!'" :showButton="!state.client.ready" buttonText="Next round" :buttonHandler="ready"></Popup>
 
-                <Popup v-if="!state.game.winner && !state.game.ready" type="wait" message="Waiting for game to start" :showButton="!state.client.ready" buttonText="Ready!" :buttonHandler="ready"></Popup>
+                <Popup v-if="!state.game.winner && !state.game.ready"  icon="paper-plane" type="wait" message="Waiting for game to start" :showButton="!state.client.ready" buttonText="Ready!" :buttonHandler="ready"></Popup>
 
             </Board>
 

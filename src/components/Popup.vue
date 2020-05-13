@@ -2,7 +2,7 @@
     <div class="popup">
         <div class="message" :class="type">{{message}}</div>                
         <div class="block" v-if="showButton"> 
-            <div class="big-yellow-button" @click="buttonHandler">{{buttonText}}</div>
+            <div class="big-yellow-button" @click="buttonHandler"><i class="fa" :class="'fa-'+icon"></i> {{buttonText}}</div>
         </div>
     </div>
 </template>
@@ -10,7 +10,7 @@
 <script>
     export default {
         name: "Popup",
-        props:['type', 'message', 'buttonText', 'buttonHandler', 'showButton'],
+        props:['type', 'message', 'buttonText', 'buttonHandler', 'showButton', 'icon'],
     }
 </script>
 
@@ -88,10 +88,10 @@
       	display: block;
 		width: 300px;
 		height: 61px;
+        line-height:61px;
 		border-radius: 35px;
 		box-sizing: border-box;
 		font-size: 35px;
-		padding: 9px 49px;
 		text-decoration: none;
 		color: green;
 		font-weight: bold;
@@ -119,7 +119,7 @@
         text-shadow: none;
     }
     .big-yellow-button:active {
-        padding-top:10px;
+        padding-top:2px;
         background: #ff9100;
         background: linear-gradient(to bottom,  #ff9100 0%,#ffb300 100%);
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.32) inset, 0 -1px 0px white inset;

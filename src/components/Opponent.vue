@@ -2,6 +2,9 @@
     <div class="opponet" :style="{left: position}">
 
         <div class="oppo-cards">
+            <div v-if="data.turn">
+                <div class="card-active-border" v-for="(card, index) in cards" :style="transform(card)" :key="index"></div>
+            </div>
             <div class="playing_card back" v-for="(card, index) in cards" :style="transform(card)" :key="index"></div>
         </div>
 
@@ -77,12 +80,23 @@
         width:45px;
         height:70px;
         box-shadow:-3px -4px 3px rgba(0,0,0,0.3);
+        z-index: 500;
     }
     .back{
         background:url('../../public/img/back.png') no-repeat;
         background-size:100% 100%;
     }    
-
+    .card-active-border{
+        top:0;
+        left:0;
+        transform-origin: 22px 200px;
+        display:block;
+        position:absolute;
+        border-radius:8px;
+        width:45px;
+        height:70px;
+        box-shadow: 0px 0px 1px 5px rgba(255,234,0,1);
+    }
     .oppo-name{
         width:100%;
         height:23px;

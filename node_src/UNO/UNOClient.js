@@ -11,6 +11,7 @@ module.exports = class UNOClient extends Client{
         this.hasWon = false;
         this.cards = [];
         this.score = [];
+        this.takeOrLeave = false;
     }
     getScore(){
         return this.score;
@@ -44,9 +45,16 @@ module.exports = class UNOClient extends Client{
         this.turn = turn;
         return this;
     }
+    getTakeOrLeave(){
+        return this.takeOrLeave;
+    }
+    setTakeOrLeave(takeOrLeave){
+        this.takeOrLeave = takeOrLeave;
+        return this;
+    }
     getTurn(){
         return this.turn;
-    }
+    }    
     addCard(card){
         this.cards.push(card);
     }

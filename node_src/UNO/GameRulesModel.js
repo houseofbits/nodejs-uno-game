@@ -26,6 +26,9 @@ module.exports = class GameRulesModel{
         this.shuffleDeck();
         this.deal();
         this.begin();
+
+        console.log("---------------------------");
+        console.log(this.discardDeck);        
     }
 
     shuffleDeck() {
@@ -46,8 +49,8 @@ module.exports = class GameRulesModel{
         let cards = this.discardDeck;
 
         cards.forEach(function(item, i) { 
-            if (item == 'rg' || item == 'yg' || item == 'bg' || item == 'gg') a[i] = 'kg'; 
-            if (item == 'rc' || item == 'yc' || item == 'bc' || item == 'gc') a[i] = 'kc';             
+            if (item == 'rg' || item == 'yg' || item == 'bg' || item == 'gg') cards[i] = 'kg'; 
+            if (item == 'rc' || item == 'yc' || item == 'bc' || item == 'gc') cards[i] = 'kc';             
         });
 
         let j, x, i;
@@ -113,6 +116,9 @@ module.exports = class GameRulesModel{
         return false;
     }
     finishTurn(unoClient, card){
+        
+        unoClient.setTakeOrLeave(false);  
+
         if(typeof card !== 'undefined'){
             let a1 = card.charAt(0);
             let a2 = card.charAt(1);
@@ -146,18 +152,19 @@ module.exports = class GameRulesModel{
                     UNOClient.calculateScores(this.clientRepository.findAll());
                 }
             }
-        }else{
+        }else{            
             let unoClientNext = this.getNextClient(unoClient);
             if(unoClientNext instanceof UNOClient){
                 UNOClient.setArrayTurn(this.clientRepository.findAll(), false);
                 unoClientNext.setTurn(true);
             }
         }
+        console.log("---------------------------");
+        console.log(this.discardDeck);
     }
-    place(unoClient, card){
-        
+    cardCanBePlaced(card){
         let current = this.discardDeck.slice(-1)[0];
-        if(typeof current === 'undefined')return;
+        if(typeof current === 'undefined')return false;
 
         let a1 = card.charAt(0);
         let a2 = card.charAt(1);
@@ -170,6 +177,29 @@ module.exports = class GameRulesModel{
             || a1 === b1
             || a2 === b2){
 
+                return true;
+        }
+        return false;
+    }
+    place(unoClient, card){
+        
+        if(!unoClient.getTurn())return false;
+
+        if(unoClient.getTakeOrLeave()){
+            card = unoClient.getTakeOrLeave();
+        }
+
+        let current = this.discardDeck.slice(-1)[0];
+        if(typeof current === 'undefined')return;
+
+        let a1 = card.charAt(0);
+        let a2 = card.charAt(1);
+        let b1 = current.charAt(0);
+        let b2 = current.charAt(1);
+
+        //Check if card is allowed
+        if(this.cardCanBePlaced(card)){
+
             //Remove card from players hand and place it into discard deck
             let clientCard = card;
             if(a2 == 'g'){
@@ -178,7 +208,7 @@ module.exports = class GameRulesModel{
             if(a2 == 'c'){
                 clientCard = 'kc';
             }            
-            if(unoClient.getTurn() && unoClient.takeCard(clientCard)){
+            if(unoClient.getTakeOrLeave() || unoClient.takeCard(clientCard)){
                 this.discardDeck.push(card);
                 this.finishTurn(unoClient, card);
             }
@@ -186,11 +216,27 @@ module.exports = class GameRulesModel{
     }
     take(unoClient){
         if(unoClient.getTurn()){
-            this.takeCard(unoClient);
+
+            //this.takeCard(unoClient);
+
+            if(unoClient.getTakeOrLeave()){
+                unoClient.addCard(unoClient.getTakeOrLeave());
+                this.finishTurn(unoClient);
+                return;
+            }
+            
+            let card = this.drawDeck.shift();
+
             if(this.drawDeck.length == 0){
                 this.reShuffleDeck();
             }
-            this.finishTurn(unoClient);
+
+            if(this.cardCanBePlaced(card) && !unoClient.getTakeOrLeave()){
+                unoClient.setTakeOrLeave(card);
+            }else{
+                unoClient.addCard(card);
+                this.finishTurn(unoClient);
+            }
         }
     }
     takeCard(unoClient){

@@ -8,7 +8,7 @@
             <input type="text" placeholder="Type your name" class="input" v-model="client.name"/>
         </div>        
         <div class="row">
-            <div class="big-yellow-button" @click="login">Join</div>
+            <div class="big-yellow-button" @click="login"><i class="fa fa-sign-in-alt"></i> Join</div>
         </div>
         <!--input type="text" placeholder="Type your name" class="text-input" v-model="client.name"/>
 
@@ -111,12 +111,12 @@
         font-family: 'Ubuntu', georgia;
         text-align: center;
       	display: block;
-		width: 200px;
+		width: 190px;
 		height: 61px;
+        line-height: 61px;
 		border-radius: 35px;
 		box-sizing: border-box;
 		font-size: 35px;
-		padding: 9px 49px;
 		text-decoration: none;
 		color: green;
 		font-weight: bold;
@@ -144,7 +144,7 @@
         text-shadow: none;
     }
     .big-yellow-button:active {
-        padding-top:10px;
+        padding-top:2px;
         background: #ff9100;
         background: linear-gradient(to bottom,  #ff9100 0%,#ffb300 100%);
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.32) inset, 0 -1px 0px white inset;

@@ -8,6 +8,8 @@ import VueCookies from 'vue-cookies'
 //https://www.npmjs.com/package/vue-animejs
 //https://animejs.com/
 
+import  '../node_modules/@fortawesome/fontawesome-free/css/all.css'
+
 Vue.use(VueCookies)
 
 new Vue({
