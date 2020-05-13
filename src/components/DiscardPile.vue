@@ -6,7 +6,7 @@
 
 <script>
 
-    import Card from "./Card"
+    import Card from "./CardActive"
 
     export default {
         name: "DiscardPile",

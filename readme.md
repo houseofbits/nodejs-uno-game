@@ -10,3 +10,11 @@ To run dockerised Node.js app accessible in your local network
 ``` 
 docker-compose up -d
 ```
+Start server on localhost:80
+``` 
+node server.js
+``` 
+Build Vue client 
+``` 
+npm run build
+```

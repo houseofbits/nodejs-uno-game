@@ -7,7 +7,7 @@
             <div class="popup-before"></div>
             <div class="popup">
                 <div class="card-row">
-                    <CardBase :type="client.takeOrLeave"></CardBase>
+                    <Card :type="client.takeOrLeave"></Card>
                 </div>
                 <div class="row">
                     <div class="big-yellow-button" @click="playCard"><i class="fa fa-arrow-circle-up"></i> Place</div>
@@ -20,12 +20,12 @@
 </template>
 
 <script>
-    import CardBase from "./CardBase"    
+    import Card from "./Card"    
 
     export default {
         name: "DrawPile",
         props:['count', 'socket', 'client'],
-        components:{CardBase},
+        components:{Card},
         data: function() {
             return {
                 cards:[]

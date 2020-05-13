@@ -1,6 +1,5 @@
 <template>
     <div class="login-box" v-if="!client.code">
-
         <div class="row">
             <input type="text" placeholder="Channel" class="input" v-model="room"/>
         </div>
@@ -8,24 +7,19 @@
             <input type="text" placeholder="Type your name" class="input" v-model="client.name"/>
         </div>        
         <div class="row">
-            <div class="big-yellow-button" @click="login"><i class="fa fa-sign-in-alt"></i> Join</div>
+            <Button faIcon="sign-in-alt" :clickHandler="login">Join</Button>
         </div>
-        <!--input type="text" placeholder="Type your name" class="text-input" v-model="client.name"/>
-
-        <input type="text" placeholder="Channel" class="username" v-model="room"/>        
-
-        <button class="login" @click="login">Join</button>
-
-        <div class="big-yellow-button" @click="login">Join</div>
-
-        <div class="error" v-if="error">{{error}}</div-->
     </div>
 </template>
 
 <script>
+
+    import Button from "../common/Button"
+
     export default {
         name: "Authorize",
         props: ['client', 'socket'],
+        components: {Button},
         data: function() {
             return {
                 error:false,
@@ -64,8 +58,8 @@
         position:relative;
         margin-top:30px;
         margin-bottom:30px;
+        text-align: center;
     }
-
     .input{
         display: block;
         position:relative;
@@ -75,7 +69,6 @@
         font-size:27px;
         margin:auto;           
     }
-
     input{
         padding:5px;
         border:none;
@@ -104,51 +97,4 @@
         z-index:100;
         box-shadow:0 2px 6px rgba(0,0,0, 0.5);
     }
-
-    .big-yellow-button {
-        position:relative;
-        margin:auto;
-        font-family: 'Ubuntu', georgia;
-        text-align: center;
-      	display: block;
-		width: 190px;
-		height: 61px;
-        line-height: 61px;
-		border-radius: 35px;
-		box-sizing: border-box;
-		font-size: 35px;
-		text-decoration: none;
-		color: green;
-		font-weight: bold;
-		font-family: arial;
-        filter: drop-shadow(0px 5px 3px black);
-		box-shadow: 0 1px 0 rgba(255, 255, 255, 0.54) inset, 0 -2px 1px rgba(0, 0, 0, 0.31) inset;
-		background: #ffbf00;
-		background: linear-gradient(to bottom,  #ffbf00 0%,#ff9700 100%);
-        box-shadow: 0px 10px 32px -6px rgba(0,0,0,0.75);
-        text-shadow: 0px 1px 1px white;
-    }
-    .big-yellow-button:after {
-        content: '';
-        border-radius: 38px;
-        position: absolute;
-        top: -6px;
-        left: -6px;
-        bottom: -6px;
-        right: -6px;
-        border:solid 6px rgba(255, 255, 255, 0.4);
-    }
-    .big-yellow-button:hover {
-        background: #ffdc00;
-        background: linear-gradient(to bottom,  #ffdc00 0%,#ffa700 100%);
-        text-shadow: none;
-    }
-    .big-yellow-button:active {
-        padding-top:2px;
-        background: #ff9100;
-        background: linear-gradient(to bottom,  #ff9100 0%,#ffb300 100%);
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.32) inset, 0 -1px 0px white inset;
-        text-shadow: none;    
-    } 
-
 </style>

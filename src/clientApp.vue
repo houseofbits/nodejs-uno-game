@@ -17,9 +17,13 @@
 
                 <Opponent v-for="(oppo, index) in opponents" :data="oppo" :position="getOpponentPosition(index)" :key="index"></Opponent>
 
-                <Popup v-if="state.game.winner" type="win" icon="paper-plane" :message="state.game.winner + ' won!'" :showButton="!state.client.ready" buttonText="Next round" :buttonHandler="ready"></Popup>
+                <PopupReady v-if="!state.game.winner && !state.game.ready" :buttonHandler="ready" :showButton="!state.client.ready" ></PopupReady>
 
-                <Popup v-if="!state.game.winner && !state.game.ready"  icon="paper-plane" type="wait" message="Waiting for game to start" :showButton="!state.client.ready" buttonText="Ready!" :buttonHandler="ready"></Popup>
+                <PopupWon v-if="state.game.winner" :buttonHandler="ready" :winner="state.game.winner"></PopupWon>
+
+                <PopupSpecial v-if="false" :clickHandler="ready" type="c"></PopupSpecial>
+
+                <PopupTake v-if="false" card="r1" :takeHandler="null" :leaveHandler="null"></PopupTake>
 
             </Board>
 
@@ -40,9 +44,13 @@
     import DiscardPile from "./components/DiscardPile"
     import DrawPile from "./components/DrawPile"
     import ErrorMessage from "./components/ErrorMessage"
-    import Popup from "./components/Popup"
     import Scores from "./components/Scores"    
     import testData from "../public/testData.json"
+
+    import PopupReady from "./components/PopupReady"    
+    import PopupWon from "./components/PopupWon"    
+    import PopupSpecial from "./components/PopupSpecial"    
+    import PopupTake from "./components/PopupTake"    
 
     export default {
         name: "clientApp",
@@ -78,7 +86,9 @@
             }
         },
         components: {
-            Authorize, Board, Player, Opponent, DiscardPile, DrawPile, ErrorMessage, Popup, Scores
+            Authorize, Board, Player, Opponent, DiscardPile, DrawPile, ErrorMessage, Scores,
+
+            PopupReady,PopupWon,PopupSpecial,PopupTake
         },
         computed:{
             opponents:function(){
@@ -108,7 +118,7 @@
         mounted:function () {
             this.socket.on('state', this.gameStateResponse);
 
-            //this.state = testData;
+            this.state = testData;
 
             //console.log(window.location.hostname);
 

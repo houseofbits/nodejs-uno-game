@@ -1,43 +1,30 @@
 <template>
-    <div class="playing-card-placeholder":style="transform" >
-        <div class="playing_card" :class="data.type" @click="clickHandler(data.type)"><div></div><div></div><div></div></div>
-    </div>
+    <div class="playing_card" :class="[type, hoverable]"><div></div><div></div><div></div></div>
 </template>
 
 <script>
     export default {
-        name: "Card",
-        props: ['data', 'clickHandler'],
+        name: "CardBase",
+        props: ['type', 'clickHandler', 'hover'],
         computed:{
-            transform:function () {
-                return { transform: ' rotate('+this.data.angle+'deg) translate('+this.data.x+'px,'+this.data.y+'px)' };
-            }
+            hoverable:function(){return (this.hover === 'true') ? 'card-hoverable' : '';}
         }
     }
 </script>
 
 <style scoped>
-    .playing-card-placeholder{
-        transform-origin: 46px 70px;
-        display:block;
-        position:absolute;
-        width:93px;
-        height:140px;
-    }
     .playing_card{
-        /*transform-origin: 46px 70px;*/
         display:block;
-        position:absolute;
+        position:relative;
         border:solid 1px #555555;
         border-radius:8px;
         width:93px;
         height:140px;
-        left:0;
         box-shadow:-3px -4px 3px rgba(0,0,0,0.3);
     }
-    .playing_card:hover{
-        border:solid 3px #555555;        
-    }
+    .card-hoverable:hover{
+        box-shadow: 0px 0px 1px 5px rgba(255,234,0,1);
+    }     
     .r0,.r1,.r2,.r3,.r4,.r5,.r6,.r7,.r8,.r9,.rp,.rn,.rr,.rc,.rg{
         background:url('../../public/img/outl.png') no-repeat, url('../../public/img/grad.png') repeat-x 0 6px;
     }

@@ -6,7 +6,7 @@
                 <div v-if="client.turn">
                     <div class="card-active-border" v-for="(card, index) in cards" :style="transform(card)" :key="index"></div>
                 </div>
-                <Card v-for="(card, index) in cards" :data="card" :key="index" :clickHandler="placeCard"></Card>
+                <CardActive v-for="(card, index) in cards" :data="card" :key="index" :clickHandler="placeCard"></CardActive>
             </div>
 
             <div class="client-name" :class="{active:client.turn}">
@@ -26,6 +26,7 @@
 
 <script>
 
+    import CardActive from "./CardActive"
     import Card from "./Card"
     import NamePlate from "./NamePlate"
 
@@ -33,7 +34,7 @@
         name: "Player",
         props: ['client', 'socket'],
         components: {
-            Card, NamePlate
+            CardActive, Card, NamePlate
         },
         data: function() {
             return {

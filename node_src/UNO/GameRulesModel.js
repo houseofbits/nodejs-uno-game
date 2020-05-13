@@ -26,9 +26,6 @@ module.exports = class GameRulesModel{
         this.shuffleDeck();
         this.deal();
         this.begin();
-
-        console.log("---------------------------");
-        console.log(this.discardDeck);        
     }
 
     shuffleDeck() {
@@ -159,8 +156,6 @@ module.exports = class GameRulesModel{
                 unoClientNext.setTurn(true);
             }
         }
-        console.log("---------------------------");
-        console.log(this.discardDeck);
     }
     cardCanBePlaced(card){
         let current = this.discardDeck.slice(-1)[0];
@@ -216,8 +211,6 @@ module.exports = class GameRulesModel{
     }
     take(unoClient){
         if(unoClient.getTurn()){
-
-            //this.takeCard(unoClient);
 
             if(unoClient.getTakeOrLeave()){
                 unoClient.addCard(unoClient.getTakeOrLeave());
