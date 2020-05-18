@@ -1,12 +1,15 @@
 <template>
     <div class="discard-pos">
-        <Card v-for="(card, index) in cards" :data="card" :key="index"></Card>
+        <div class="placeholder" v-for="(card, index) in cards" :style="transform(card)" :key="index">
+            <Card :type="card.type"></Card>
+        </div>
+
     </div>
 </template>
 
 <script>
 
-    import Card from "./CardActive"
+    import Card from "./Card"
 
     export default {
         name: "DiscardPile",
@@ -25,7 +28,10 @@
                     y:(10 - (Math.random()*20)),
                     angle:(10 - (Math.random()*20))
                 });
-            }         
+            },
+            transform:function (data) {
+                return { transform: ' rotate('+data.angle+'deg) translate('+data.x+'px,'+data.y+'px)' };
+            }                     
         },
         watch: {
             data: function(newVal, oldVal) {
@@ -56,4 +62,12 @@
         top:150px;
         left:340px;
     }
+    .placeholder{
+        transform-origin: 46px 70px;
+        display:block;
+        position:absolute;
+        width:93px;
+        height:140px;
+        border-radius:8px;
+    }      
 </style>

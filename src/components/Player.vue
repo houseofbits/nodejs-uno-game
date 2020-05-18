@@ -6,21 +6,14 @@
                 <div v-if="client.turn">
                     <div class="card-active-border" v-for="(card, index) in cards" :style="transform(card)" :key="index"></div>
                 </div>
-                <CardActive v-for="(card, index) in cards" :data="card" :key="index" :clickHandler="placeCard"></CardActive>
+                <CardActive v-for="(card, index) in cards" :data="card" :key="index" :clickHandler="playHandler"></CardActive>
             </div>
 
             <div class="client-name" :class="{active:client.turn}">
                 <span>{{client.name}}</span>
             </div>
 
-        </div>
-        <div v-if="showSpecial" class="popup-pos">
-            <div class="popup-before"></div>
-            <div class="popup">
-                <Card v-for="(card, index) in specialCards" :data="card" :key="index" :clickHandler="placeCard"></Card>
-            </div>
-            <div class="popup-after"></div>            
-        </div>       
+        </div>      
     </div>
 </template>
 
@@ -32,28 +25,15 @@
 
     export default {
         name: "Player",
-        props: ['client', 'socket'],
+        props: ['client', 'playHandler'],
         components: {
             CardActive, Card, NamePlate
         },
         data: function() {
             return {
-                showSpecial:false,
-                showChoice:false,
-                specialType:''
             }
         },
         computed:{
-            specialCards:function(){
-                let cards = [];
-
-                cards.push({type:'r'+this.specialType,x:200,y:30,angle:0});
-                cards.push({type:'y'+this.specialType,x:300,y:30,angle:0});
-                cards.push({type:'g'+this.specialType,x:400,y:30,angle:0});
-                cards.push({type:'b'+this.specialType,x:500,y:30,angle:0});
-
-                return cards;
-            },
             cards:function(){
                 let cards = [];
                 this.client.cards.sort();
@@ -82,18 +62,6 @@
             }
         },
         methods:{
-            placeCard:function(card){
-                if(card === 'kc'){
-                    this.showSpecial = true;
-                    this.specialType = 'c';
-                }else if(card === 'kg'){
-                    this.showSpecial = true;
-                    this.specialType = 'g';
-                }else{
-                    this.showSpecial = false;
-                    this.socket.emit('place', {'client': this.client, card:card});
-                }
-            },
             transform:function (card) {
                 return { transform: ' rotate('+card.angle+'deg) translate('+card.x+'px,'+card.y+'px)' };
             }            
@@ -142,44 +110,6 @@
     .client-name.active span{
         background: linear-gradient(to bottom, rgba(241,231,103,0) 0%, rgba(254,182,69,0.2) 100%);
         border-bottom:solid 4px rgba(255, 251, 0, 0.8);
-    }
-    .special-card{
-        position:absolute;
-        background-color: rgba(0, 0, 0, 0.5);
-        width:100%;
-        height:230px;
-        bottom:0;
-    }
-    .popup-pos{
-        position:relative;
-        top:80px;
-    }
-    .popup{
-        width:100%;
-        height:240px;
-        line-height:80px;
-        position:relative;
-        left:0;
-        top:0;
-        background: rgba(0,0,0,0.6);
-    }
-    .popup-before{
-        content:"";
-        display: block;
-        width:100%;
-        height:20px;
-        top:0;
-        background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
-        position:relative;
-    }
-    .popup-after{
-        content:"";
-        display: block;
-        width:100%;
-        height:20px;
-        bottom:0;
-        background: linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
-        position:relative;
     }
      .card-active-border{
         top:0;

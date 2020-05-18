@@ -3,7 +3,7 @@
         <template v-slot:topRow>
             <div class="won-message">{{winner}} won!</div>  
         </template>
-        <template v-slot:bottomRow>
+        <template v-slot:bottomRow v-if="showButton">
             <Button faIcon="paper-plane" :clickHandler="buttonHandler">Next round</Button>
         </template>
     </Popup>
@@ -17,7 +17,7 @@
     export default {
         name: "PopupWon",
         components: {Popup, Button},
-        props:['buttonHandler', 'winner']
+        props:['buttonHandler', 'winner', 'showButton']
     }
 </script>
 

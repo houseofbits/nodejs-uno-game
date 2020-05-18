@@ -2,16 +2,16 @@
     <Popup>
         <template v-slot:topRow>
             <div class="card-float">
-                <Card :type="'r'+type" :clickHandler="clickHandler('r'+type)" hover="true"></Card>
+                <Card :type="'r'+type" :clickHandler="clickHandler" hover="true"></Card>
             </div>
             <div class="card-float">
-                <Card :type="'y'+type" :clickHandler="clickHandler('y'+type)" hover="true"></Card>
+                <Card :type="'y'+type" :clickHandler="clickHandler" hover="true"></Card>
             </div>
             <div class="card-float">
-                <Card :type="'g'+type" :clickHandler="clickHandler('g'+type)" hover="true"></Card>
+                <Card :type="'g'+type" :clickHandler="clickHandler" hover="true"></Card>
             </div>
             <div class="card-float">
-                <Card :type="'b'+type" :clickHandler="clickHandler('b'+type)" hover="true"></Card>
+                <Card :type="'b'+type" :clickHandler="clickHandler" hover="true"></Card>
             </div>                        
         </template>
     </Popup>

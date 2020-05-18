@@ -7,7 +7,7 @@
         </template>
         <template v-slot:bottomRow>
             <div class="button-float">
-                <Button faIcon="arrow-circle-up" :clickHandler="leaveHandler">Place</Button>
+                <Button faIcon="arrow-circle-up" :clickHandler="leave">Place</Button>
             </div>
             <div class="button-float">
                 <Button faIcon="arrow-circle-down" :clickHandler="takeHandler">Take</Button>
@@ -25,7 +25,12 @@
     export default {
         name: "PopupTake",
         props:['takeHandler','leaveHandler','card'],
-        components: {Popup, Card, Button}
+        components: {Popup, Card, Button},
+        methods:{
+            leave:function(){
+                this.leaveHandler(this.card);
+            }
+        }
     }
 </script>
 

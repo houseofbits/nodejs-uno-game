@@ -12,6 +12,9 @@ module.exports = class UNOClient extends Client{
         this.cards = [];
         this.score = [];
         this.takeOrLeave = false;
+
+        this.cardsTaken = [];
+        this.cardsPlaced = [];
     }
     getScore(){
         return this.score;

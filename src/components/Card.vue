@@ -1,5 +1,5 @@
 <template>
-    <div class="playing_card" :class="[type, hoverable]"><div></div><div></div><div></div></div>
+    <div class="playing_card" @click="clickHandler?clickHandler(type):null" :class="[type, hoverable]"><div></div><div></div><div></div></div>
 </template>
 
 <script>

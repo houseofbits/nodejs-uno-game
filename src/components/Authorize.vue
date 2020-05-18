@@ -30,11 +30,19 @@
             login:function () {
                 if(this.client.name.length > 0) {
                     this.socket.emit('create', this.room);
-                    this.socket.emit('login', {'client': this.client});
+                    this.socket.emit('login', {'client': this.client});                    
+                    //this.$cookies.set('client',{name:this.client.name, room:this.room});
                 }
             }
         },
-        mounted:function () {   }
+        mounted:function () {               
+            // if(this.$cookies.isKey('client')){
+            //     let data = this.$cookies.get('client');
+            //     this.client.name = data.name;
+            //     this.room = data.room;
+            //     this.login();
+            // }
+        }
     }
 </script>
 

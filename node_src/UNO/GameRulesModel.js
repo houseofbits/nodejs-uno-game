@@ -177,11 +177,11 @@ module.exports = class GameRulesModel{
         return false;
     }
     place(unoClient, card){
-        
+
         if(!unoClient.getTurn())return false;
 
         if(unoClient.getTakeOrLeave()){
-            card = unoClient.getTakeOrLeave();
+            //TODO check if card === unoClient.getTakeOrLeave()
         }
 
         let current = this.discardDeck.slice(-1)[0];
@@ -210,6 +210,7 @@ module.exports = class GameRulesModel{
         }
     }
     take(unoClient){
+
         if(unoClient.getTurn()){
 
             if(unoClient.getTakeOrLeave()){

@@ -2,7 +2,7 @@
 let express = require('express');
 let application = express();
 let server = require('http').Server(application);
-let GameService = require('./node_src/UNO/UNOGameService.js');
+let GameServiceFactory = require('./node_src/GameServiceFactory.js');
 let GameServiceRepository = require('./node_src/GameServiceRepository.js');
 let UnitTest = require('./node_src/UnitTest.js');
 
@@ -21,6 +21,8 @@ console.log('============= Server started ===============');
 
 let io = require('socket.io')(server, {});
 let gameServiceRepository = new GameServiceRepository();
+let gameServiceFactory = new GameServiceFactory();
+
 io.sockets.on('connection', function(socket) {
     console.log('Socket connection');
     socket.on('create', function(room) {
@@ -31,8 +33,8 @@ io.sockets.on('connection', function(socket) {
         let gameService = gameServiceRepository.findById(room);
 
         if(!gameService){
-            //Create new room
-            gameService = gameServiceRepository.insert(new GameService(room));
+            gameService = gameServiceFactory.create("UNO", room);
+            gameServiceRepository.insert(gameService);
         }
         socket.use(function(packet){
             gameService.handleAction(socket, packet[0], packet[1]);             

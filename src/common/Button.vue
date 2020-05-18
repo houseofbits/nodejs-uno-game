@@ -1,5 +1,5 @@
 <template>
-    <div class="button" @click="clickHandler?clickHandler:null"><i :class="'fa fa-'+faIcon"></i> <slot></slot></div>
+    <div class="button" @click="clickHandler"><i :class="'fa fa-'+faIcon"></i> <slot></slot></div>
 </template>
 
 <script>

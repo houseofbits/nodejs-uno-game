@@ -3,7 +3,7 @@
         "code":123,
         "name":"Krists",
         "ready":false,
-        "turn":false,
+        "turn":true,
         "hasWon":false,
         "cards":["kg","kc","g3","b4","yp","rn","bn", "r1","y2","g3","b4","yp","rn","bn"]
     },

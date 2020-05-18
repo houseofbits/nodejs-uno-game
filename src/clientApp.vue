@@ -11,19 +11,21 @@
 
                 <DiscardPile :data="state.game.discardDeck"></DiscardPile>
 
-                <DrawPile :count="state.game.drawDeckCount" :socket="socket" :client="state.client"></DrawPile>
+                <DrawPile :count="state.game.drawDeckCount" :takeHandler="takeCard"></DrawPile>
 
-                <Player :client="state.client" :socket="socket"></Player>
+                <Player :client="state.client" :playHandler="playCard"></Player>
 
                 <Opponent v-for="(oppo, index) in opponents" :data="oppo" :position="getOpponentPosition(index)" :key="index"></Opponent>
+                
+                <AnimateState :animate="animate" :state="state" :newState="newState" :finishHandler="animationFinished"></AnimateState>
 
-                <PopupReady v-if="!state.game.winner && !state.game.ready" :buttonHandler="ready" :showButton="!state.client.ready" ></PopupReady>
+                <PopupReady v-if="!state.game.winner && !state.game.ready" :buttonHandler="ready" :showButton="!state.client.ready"></PopupReady>
 
-                <PopupWon v-if="state.game.winner" :buttonHandler="ready" :winner="state.game.winner"></PopupWon>
+                <PopupWon v-if="state.game.winner" :buttonHandler="ready" :winner="state.game.winner" :showButton="!state.client.ready"></PopupWon>
 
-                <PopupSpecial v-if="false" :clickHandler="ready" type="c"></PopupSpecial>
+                <PopupSpecial v-if="showSpecial" :clickHandler="playCard" :type="specialType"></PopupSpecial>
 
-                <PopupTake v-if="false" card="r1" :takeHandler="null" :leaveHandler="null"></PopupTake>
+                <PopupTake v-if="!showSpecial && state.client.takeOrLeave" :card="state.client.takeOrLeave" :takeHandler="takeCard" :leaveHandler="playCard"></PopupTake>
 
             </Board>
 
@@ -45,12 +47,12 @@
     import DrawPile from "./components/DrawPile"
     import ErrorMessage from "./components/ErrorMessage"
     import Scores from "./components/Scores"    
-    import testData from "../public/testData.json"
-
     import PopupReady from "./components/PopupReady"    
     import PopupWon from "./components/PopupWon"    
     import PopupSpecial from "./components/PopupSpecial"    
     import PopupTake from "./components/PopupTake"    
+    import testData from "../public/testData.json"
+    import AnimateState from "./components/AnimateState"    
 
     export default {
         name: "clientApp",
@@ -78,17 +80,16 @@
                     },
                     messages:[],
                 },
+                newState:null,
+                animate:false,
                 error:'',
-                config:{
-                    discardPilePosition:{x:350, y:300},
-                    drawPilePosition:{x:50, y:300}
-                }
+                showSpecial:false,
+                specialType:''
             }
         },
         components: {
             Authorize, Board, Player, Opponent, DiscardPile, DrawPile, ErrorMessage, Scores,
-
-            PopupReady,PopupWon,PopupSpecial,PopupTake
+            PopupReady,PopupWon,PopupSpecial,PopupTake,AnimateState
         },
         computed:{
             opponents:function(){
@@ -108,17 +109,44 @@
                 return ((marg / 2) + (index * marg)) - 100 + "px";
             },
             gameStateResponse:function(response){
-                this.state = response;
+                if(this.state.client.code){
+                    this.newState = response;
+                    this.animate = true;
+                }else{
+                    this.state = response;
+                }
             },
             ready:function () {
                 this.state.client.ready = true;
                 this.socket.emit('begin', {'client': this.state.client});
             },            
+            playCard:function(card){
+                if(card === 'kc'){
+                    this.showSpecial = true;
+                    this.specialType = 'c';
+                }else if(card === 'kg'){
+                    this.showSpecial = true;
+                    this.specialType = 'g';
+                }else{
+                    this.showSpecial = false;
+                    this.socket.emit('place', {'client': this.state.client, card:card});
+                }
+            },
+            takeCard:function(){
+                this.socket.emit('take', {'client': this.state.client});
+            },
+            animationFinished:function(){
+                this.animate = false;
+                if(this.newState){
+                    this.state = this.newState;
+                    this.newState = null;
+                }
+            }
         },
         mounted:function () {
             this.socket.on('state', this.gameStateResponse);
 
-            this.state = testData;
+            //this.state = testData;
 
             //console.log(window.location.hostname);
 
