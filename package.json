@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --mode=development",
     "serve": "vue-cli-service serve"
   },
   "author": "",
@@ -13,9 +13,9 @@
     "@fortawesome/fontawesome-free": "^5.13.0",
     "animejs": "^3.2.0",
     "express": "^4.17.1",
+    "gsap": "^3.2.6",
     "socket.io": "^2.3.0",
     "vue": "^2.6.11",
-    "vue-animejs": "^2.1.1",
     "vue-cookies": "^1.7.0",
     "vue-socket.io": "^3.0.7"
   },

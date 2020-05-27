@@ -59,10 +59,11 @@ module.exports = class UNOClient extends Client{
         return this.turn;
     }    
     addCard(card){
+        card.setOwner(this.getName());
         this.cards.push(card);
     }
-    takeCard(card){
-        let index = this.cards.indexOf(card);
+    removeCard(card){
+        let index = this.cards.findIndex(function(elem){return elem.getId() == card.getId()});
         if(index >= 0){
             this.cards.splice(index, 1);
             return true;

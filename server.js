@@ -14,8 +14,8 @@ application.get('/', function(request, response){
 });
 application.use('/client', express.static(__dirname + '/client'));
 
-//server.listen(3000);
-server.listen(80);
+server.listen(3000);
+//server.listen(80);
 
 console.log('============= Server started ===============');
 
@@ -40,6 +40,8 @@ io.sockets.on('connection', function(socket) {
             gameService.handleAction(socket, packet[0], packet[1]);             
             Object.keys(io.sockets.sockets).forEach(function(id) {
                 let data = gameService.getClientResponseData(id);
+                // console.log("=================== response ============================");
+                // console.log(data);
                 if(data){
                     io.to(id).emit('state', data);
                 }

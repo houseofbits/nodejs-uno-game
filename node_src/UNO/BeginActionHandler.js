@@ -17,7 +17,7 @@ module.exports = class BeginActionHandler extends GameActionHandler{
         if(!this.getGameService().getClientRepository().findByReady(false)
             &&  this.getGameService().getClientRepository().count() > 1
         ){
-            this.getGameService().getGameRulesModel().init();
+            this.getGameService().getGameRulesModel().deal();
         }
         return true;
     }

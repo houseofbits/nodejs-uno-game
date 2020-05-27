@@ -1,6 +1,6 @@
 <template>
     <div class="placeholder" :style="transform">
-        <Card :type="data.type" :clickHandler="clickHandler" hover="true"></Card>
+        <Card :type="data.type" :clickHandler="handler" hover="true"></Card>
     </div>
 </template>
 
@@ -15,6 +15,14 @@
         computed:{
             transform:function () {
                 return { transform: ' rotate('+this.data.angle+'deg) translate('+this.data.x+'px,'+this.data.y+'px)' };
+            }
+        },
+        methods:{
+            handler:function(card){
+                if(this.clickHandler){
+                    console.log('click handler '+card);
+                    this.clickHandler(card);
+                }
             }
         }
     }

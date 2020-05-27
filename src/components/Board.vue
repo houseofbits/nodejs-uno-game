@@ -13,11 +13,9 @@
 
 <style scoped>
     .table{
-        top:5px;
-        position:relative;
-        width:800px;
-        height:540px;
-        margin:0 auto;
+        position:absolute;
+        width:100%;
+        height:100%;        
         border-bottom:solid 1px #000;
         border-top:solid 1px #000;
         border-left:solid 1px #9a6515;
@@ -26,6 +24,8 @@
         background:url('../../public/img/table.jpg')no-repeat;
         background-repeat: round;
         box-shadow:0 6px 12px #000;
+        transform-style: preserve-3d;
+        /*perspective: 1000px;*/
     }
     .grad{
         position:relative;

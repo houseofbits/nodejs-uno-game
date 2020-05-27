@@ -2,16 +2,16 @@
     <Popup>
         <template v-slot:topRow>
             <div class="card-float">
-                <Card :type="'r'+type" :clickHandler="clickHandler" hover="true"></Card>
+                <CardTemplate :type="'r'+getNumber()" :clickHandler="click" hover="true"></CardTemplate>
             </div>
             <div class="card-float">
-                <Card :type="'y'+type" :clickHandler="clickHandler" hover="true"></Card>
+                <CardTemplate :type="'y'+getNumber()" :clickHandler="click" hover="true"></CardTemplate>
             </div>
             <div class="card-float">
-                <Card :type="'g'+type" :clickHandler="clickHandler" hover="true"></Card>
+                <CardTemplate :type="'g'+getNumber()" :clickHandler="click" hover="true"></CardTemplate>
             </div>
             <div class="card-float">
-                <Card :type="'b'+type" :clickHandler="clickHandler" hover="true"></Card>
+                <CardTemplate :type="'b'+getNumber()" :clickHandler="click" hover="true"></CardTemplate>
             </div>                        
         </template>
     </Popup>
@@ -20,12 +20,20 @@
 <script>
 
     import Popup from "../common/Popup"
-    import Card from "./Card" 
+    import CardTemplate from "../components/Card"
 
     export default {
         name: "PopupSpecial",
-        props:['clickHandler', 'type'],
-        components: {Popup, Card}
+        props:['clickHandler', 'card'],
+        components: {Popup, CardTemplate},
+        methods:{
+            getNumber:function(){
+                return this.card.type.charAt(1);
+            },
+            click:function(cardType){
+                this.clickHandler(this.card.id, cardType);
+            }
+        }
     }
 </script>
 

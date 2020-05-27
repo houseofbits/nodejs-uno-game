@@ -16,7 +16,7 @@
     .playing_card{
         display:block;
         position:relative;
-        border:solid 1px #555555;
+        /*border:solid 1px #555555;*/
         border-radius:8px;
         width:93px;
         height:140px;

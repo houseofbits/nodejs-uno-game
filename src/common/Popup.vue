@@ -23,7 +23,7 @@
         left:0;
         margin:0;
         padding:0;
-        top:100px;
+        top:210px;
         background: rgba(0,0,0,0.6);
         /*border:solid 1px red;*/
     }

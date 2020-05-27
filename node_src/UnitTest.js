@@ -1,6 +1,7 @@
 let ClientRepository = require('./UNO/UNOClientRepository.js');
 let Client = require('./Client.js');
 let UNOClient = require('./UNO/UNOClient.js');
+let GameRulesModel2 = require('./UNO/GameRulesModel2.js');
 
 const assert = require('assert');
 
@@ -9,6 +10,7 @@ module.exports = class UnitTest{
         
         this.clientRepo();
         this.unoClient();
+        this.gameRulesModel();
 
     }    
     clientRepo(){
@@ -46,6 +48,29 @@ module.exports = class UnitTest{
 
         assert.strictEqual(cl.getTurn(), true);
 
+    }
+    gameRulesModel(){
+
+        let repo = new ClientRepository();
+        
+        repo.insert(new UNOClient("Janis"));
+        repo.insert(new UNOClient("Rainis"));
+        repo.insert(new UNOClient("Dace"));
+
+        let gm = new GameRulesModel2(repo);
+
+        gm.init();
+
+        assert.strictEqual((gm.cardRepository.findAll().length > 0), true);
+        assert.strictEqual((gm.drawDeck.length > 0), true);
+
+        gm.deal();
+
+        assert.strictEqual((gm.discardDeck.length > 0), true);
+
+        let cl = repo.get(0);
+
+        assert.strictEqual((cl.getCardsCount() == 7), true);
     }
 
 };

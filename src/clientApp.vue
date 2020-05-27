@@ -19,6 +19,8 @@
                 
                 <AnimateState :animate="animate" :state="state" :newState="newState" :finishHandler="animationFinished"></AnimateState>
 
+                <AnimateLocal type="rn" :animate="animate"></AnimateLocal>
+
                 <PopupReady v-if="!state.game.winner && !state.game.ready" :buttonHandler="ready" :showButton="!state.client.ready"></PopupReady>
 
                 <PopupWon v-if="state.game.winner" :buttonHandler="ready" :winner="state.game.winner" :showButton="!state.client.ready"></PopupWon>
@@ -53,6 +55,7 @@
     import PopupTake from "./components/PopupTake"    
     import testData from "../public/testData.json"
     import AnimateState from "./components/AnimateState"    
+//    import AnimateLocal from "./components/AnimateLocal"    
 
     export default {
         name: "clientApp",
@@ -84,7 +87,7 @@
                 animate:false,
                 error:'',
                 showSpecial:false,
-                specialType:''
+                specialType:'',
             }
         },
         components: {
@@ -146,7 +149,7 @@
         mounted:function () {
             this.socket.on('state', this.gameStateResponse);
 
-            //this.state = testData;
+            this.state = testData;
 
             //console.log(window.location.hostname);
 

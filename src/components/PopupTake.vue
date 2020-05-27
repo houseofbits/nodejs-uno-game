@@ -2,7 +2,7 @@
     <Popup>
         <template v-slot:topRow>
             <div class="card-center">
-                <Card :type="card"></Card>
+                <Card :type="card.type"></Card>
             </div>
         </template>
         <template v-slot:bottomRow>
@@ -28,7 +28,7 @@
         components: {Popup, Card, Button},
         methods:{
             leave:function(){
-                this.leaveHandler(this.card);
+                this.leaveHandler(this.card.id);
             }
         }
     }

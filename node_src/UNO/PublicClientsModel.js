@@ -11,6 +11,9 @@ module.exports = class PublicClientsModel {
         this.clients = [];
         this._processClients(clientRepository.findAll());
     }
+    getClients(){
+        return this.clients;
+    }
     _processClients(clientsArray){
         for(let i=0; i<clientsArray.length; i++){
             this._addClient(clientsArray[i]);
