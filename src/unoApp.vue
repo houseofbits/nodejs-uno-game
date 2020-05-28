@@ -3,6 +3,8 @@
         <Authorize :client="state.client" :socket="socket"></Authorize>
 
         <Board v-if="state.client.code">
+            
+            <Scores :clients="state.clients"></Scores>
 
             <Card v-for="card in state.game.cards" 
                     :ref="'card'+card.id"
@@ -43,6 +45,7 @@
     import PopupSpecial from "./components/PopupSpecial"    
     import PopupTake from "./components/PopupTake"   
     import NamePlate from "./comp2/NamePlate"    
+    import Scores from "./components/Scores"   
 
     import testDataNew from "../public/testDataNew.json"
 
@@ -79,7 +82,7 @@
             }
         },
         components: {
-            Board, Card, Authorize, PopupReady, PopupWon,PopupSpecial,PopupTake,NamePlate 
+            Board, Card, Authorize, PopupReady, PopupWon,PopupSpecial,PopupTake,NamePlate,Scores
         },
         computed:{
             self:function(){
@@ -322,6 +325,10 @@
             },
             updateState:function(cards){
                 for(let i=0; i<this.state.game.cards.length; i++){
+                    if(typeof cards[i] === 'undefined')continue;
+                    if(cards[i].owner !== this.state.game.cards[i].owner){
+                        this.cardSetOwner(this.state.game.cards[i], cards[i].owner);
+                    }
                     this.state.game.cards[i].owner = cards[i].owner;
                     this.state.game.cards[i].type = cards[i].type;    
                     this.state.game.cards[i].moveId = cards[i].moveId;    
@@ -329,8 +336,6 @@
                 }
             },
             gameStateResponse(response){
-                
-                //console.log(response);
 
                 this.state.client = response.client;
 
@@ -348,13 +353,12 @@
                     if(!this.config.playersInitialized){
                         this.config.playersInitialized = true;
                         this.initPlayers();
-                    }
-                    this.updateState(response.game.cards);
-                    this.processEvents();
-                    this.updateDiscardDeck();
+                    }                    
+                    this.processEvents();                    
                 }
+                this.updateState(response.game.cards);
+                this.updateDiscardDeck();
             },
-
         },
         mounted:function () {
 

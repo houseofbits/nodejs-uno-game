@@ -134,6 +134,6 @@
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
         transform: rotateY(180deg);
-    }    
+    }   
 
 </style>

@@ -47,6 +47,8 @@ module.exports = class GameRulesModel2{
     }
     deal(){
 
+        this.shuffleDeck();
+
         this.clearEvents();
 
         let i, k;

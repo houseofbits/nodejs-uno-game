@@ -22,7 +22,7 @@ module.exports = class UNOClient extends Client{
     calculateScore(){
         let score = 0;
         this.cards.forEach(card => {
-            let c2 = card.charAt(1);
+            let c2 = card.getNumber();
             if(c2 === 'g' || c2 === 'c'){
                 score += 50;
             } else if(c2 === 'p' || c2 === 'n' || c2 === 'r'){
