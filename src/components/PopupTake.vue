@@ -2,7 +2,7 @@
     <Popup>
         <template v-slot:topRow>
             <div class="card-center">
-                <Card :type="card.type"></Card>
+                <CardTemplate :type="card.type"></CardTemplate>
             </div>
         </template>
         <template v-slot:bottomRow>
@@ -19,13 +19,13 @@
 <script>
 
     import Popup from "../common/Popup"
-    import Card from "./Card" 
+    import CardTemplate from "./CardTemplate" 
     import Button from "../common/Button"
 
     export default {
         name: "PopupTake",
         props:['takeHandler','leaveHandler','card'],
-        components: {Popup, Card, Button},
+        components: {Popup, CardTemplate, Button},
         methods:{
             leave:function(){
                 this.leaveHandler(this.card.id);

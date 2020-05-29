@@ -15,6 +15,9 @@ module.exports = class CardRepository{
     findById(id){
         return this.cards.find(function(elem){return elem.getId() === id;});
     }
+    findByOwner(owner){
+        return this.cards.find(function(elem){return elem.getOwner() === owner;});
+    }    
     findAll(){
         return this.cards;
     }

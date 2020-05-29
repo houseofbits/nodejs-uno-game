@@ -12,9 +12,6 @@ module.exports = class UNOClient extends Client{
         this.cards = [];
         this.score = [];
         this.takeOrLeave = false;
-
-        this.cardsTaken = [];
-        this.cardsPlaced = [];
     }
     getScore(){
         return this.score;
@@ -60,12 +57,15 @@ module.exports = class UNOClient extends Client{
     }    
     addCard(card){
         card.setOwner(this.getName());
-        this.cards.push(card);
+        let existing = this.cards.find(function(elem){return elem.getId() === card.getId()});
+        if(typeof existing === 'undefined'){
+            this.cards.push(card);
+        }
     }
     removeCard(card){
-        let index = this.cards.findIndex(function(elem){return elem.getId() == card.getId()});
+        let index = this.cards.findIndex(function(elem){return elem.getId() === card.getId()});
         if(index >= 0){
-            this.cards.splice(index, 1);
+            let deleted = this.cards.splice(index, 1);
             return true;
         }
         return false;

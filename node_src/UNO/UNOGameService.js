@@ -1,6 +1,6 @@
 let GameService = require('../GameService.js');
 
-let GameRulesModel2 = require('./GameRulesModel2.js');
+let GameRulesModel = require('./GameRulesModel.js');
 let UNOClient = require('./UNOClient.js');
 let UNOClientRepository = require('./UNOClientRepository.js');
 let MessageRepository = require('../MessageRepository.js');
@@ -14,7 +14,7 @@ module.exports = class UNOGameService extends GameService{
     constructor(id) {
         super(id, new MessageRepository(), new UNOClientRepository());
         
-        this.gameRulesModel = new GameRulesModel2(this.getClientRepository());
+        this.gameRulesModel = new GameRulesModel(this.getClientRepository());
         this.clientResponseBuilder = new ClientResponseBuilder(this.getClientRepository(), this.getGameRulesModel());
 
         this.actionHandlers.login = new LoginActionHandler(this);

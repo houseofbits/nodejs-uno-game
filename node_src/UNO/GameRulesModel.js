@@ -1,66 +1,74 @@
 let ClientRepository = require('./UNOClientRepository.js');
 let UNOClient = require('./UNOClient.js');
+let Card = require('./Card.js');
+let CardRepository = require('./CardRepository.js');
 
-/**
- * UNO Game rules model. This is basis for all game logic
- * @type {module.GameRulesModel}
- */
 module.exports = class GameRulesModel{
 
     constructor(clientRepository) {
-
-        this.cards = [
+        this.cardTypes = [
             'r0','r1','r2','r3','r4','r5','r6','r7','r8','r9','rp','rn','rr',
             'g0','g1','g2','g3','g4','g5','g6','g7','g8','g9','gp','gn','gr',
             'b0','b1','b2','b3','b4','b5','b6','b7','b8','b9','bp','bn','br',
             'y0','y1','y2','y3','y4','y5','y6','y7','y8','y9','yp','yn','yr',
             'kg','kc','kg','kc'
-        ];
+        ];        
         this.clientRepository = clientRepository;
+        this.cardRepository = new CardRepository();
+
         this.drawDeck = [];
         this.discardDeck = [];
         this.direction = true;
-    }
+        this.moveIndex = 0;
+        this.events = [];
 
+        this.init();
+    }
     init(){
         this.shuffleDeck();
-        this.deal();
-        this.begin();
-    }
-
-    shuffleDeck() {
+    }    
+    shuffleDeck(){
+        this.moveIndex = 0;
         let j, x, i;
-        for (i = this.cards.length - 1; i > 0; i--) {
+        for (i = this.cardTypes.length - 1; i > 0; i--) {
             j = Math.floor(Math.random() * (i + 1));
-            x = this.cards[i];
-            this.cards[i] = this.cards[j];
-            this.cards[j] = x;
-        }
-        this.drawDeck = [];
-        for(i=0; i<this.cards.length; i++){
-            this.drawDeck.push(this.cards[i]);
+            x = this.cardTypes[i];
+            this.cardTypes[i] = this.cardTypes[j];
+            this.cardTypes[j] = x;
+        }   
+        this.cardRepository.clear(); 
+        this.drawDeck = [];    
+        for(let i=0; i<this.cardTypes.length; i++){
+            let card = new Card(i, this.cardTypes[i]);
+            card.setMoveId(this.incrementMoveIndex());
+            this.cardRepository.insert(card);
+            this.drawDeck.push(card);
         }
     }
     reShuffleDeck(){
-        let current = this.discardDeck.pop();
-        let cards = this.discardDeck;
-
-        cards.forEach(function(item, i) { 
-            if (item == 'rg' || item == 'yg' || item == 'bg' || item == 'gg') cards[i] = 'kg'; 
-            if (item == 'rc' || item == 'yc' || item == 'bc' || item == 'gc') cards[i] = 'kc';             
-        });
-
-        let j, x, i;
-        for (i = cards.length - 1; i > 0; i--) {
-            j = Math.floor(Math.random() * (i + 1));
-            x = cards[i];
-            cards[i] = cards[j];
-            cards[j] = x;
+        let topCard = this.discardDeck.pop();
+        for(let i=0; i<this.discardDeck.length; i++){
+            if(this.discardDeck[i].getNumber() === 'g'){
+                this.discardDeck[i].setType("kg");
+            }
+            if(this.discardDeck[i].getNumber() === 'c') {
+                this.discardDeck[i].setType("kc");            
+            }
+            this.discardDeck[i].setOwner("draw");
+            let move = Math.floor(Math.random() * 1000);
+            this.discardDeck[i].setMoveId(move);
+            this.drawDeck.push(this.discardDeck[i]);
+            this.saveEvent(this.discardDeck[i], "draw");
         }
-        this.drawDeck = cards;
-        this.discardDeck = [current];
+        this.discardDeck = [];
+        this.discardDeck.push(topCard);
     }
     deal(){
+
+        this.shuffleDeck();
+
+        this.clearEvents();
+
         let i, k;
         let clients = this.clientRepository.findAll();
         for (k=0; k<clients.length; k++){
@@ -68,23 +76,19 @@ module.exports = class GameRulesModel{
         }       
         for(i=0; i<7; i++){
             for (k=0; k<clients.length; k++){
-                clients[k].addCard(this.drawDeck.shift());
+                this.takeCard(clients[k]);
             }
         }
         this.discardDeck = [];
         while(true) {
-            let c = this.drawDeck.shift();
-            this.discardDeck.push(c);
-            if(c !== 'kg' && c !== 'kc') {
+            let card = this.drawDeck.shift();
+            this.placeCard(card);
+            if(card.getType() !== 'kg' && card.getType() !== 'kc') {
                 break;
             }
         }
         this.begin();
     }
-
-    /**
-     * Begin playing by setting one of client.turn = true
-     */
     begin(){
         //Set all client turns to false
         UNOClient.setArrayTurn(this.clientRepository.findAll(), false);
@@ -92,13 +96,8 @@ module.exports = class GameRulesModel{
         
         //Should be randomized
         this.clientRepository.get(0).setTurn(true);
-    }
 
-    /**
-     * End playing by setting all clients .turn = false
-     */
-    end(){
-
+        this.validateNextMove();
     }
     getNextClient(unoClient){
         let unoClientNext;
@@ -112,27 +111,39 @@ module.exports = class GameRulesModel{
         }            
         return false;
     }
+    cardCanBePlaced(card){
+        let current = this.discardDeck.slice(-1)[0];
+        if(typeof current === 'undefined')return false;
+
+        //Check if card is allowed
+        if(card.getNumber() === 'g'       //kg (rg,yg,bg,gg)
+            || card.getNumber() === 'c'   //kc (rc,yc,bc,gc)
+            || card.getColor() === current.getColor()
+            || card.getNumber() === current.getNumber()){
+
+                return true;
+        }
+        return false;
+    }    
     finishTurn(unoClient, card){
         
         unoClient.setTakeOrLeave(false);  
 
-        if(typeof card !== 'undefined'){
-            let a1 = card.charAt(0);
-            let a2 = card.charAt(1);
+        if(card instanceof Card){
             let unoClientNext = this.getNextClient(unoClient);
             if(unoClientNext instanceof UNOClient){
-                if(a2 === 'g'){     //pick up 4
+                if(card.getNumber() === 'g'){     //pick up 4
                     this.takeCard(unoClientNext);
                     this.takeCard(unoClientNext);
                 }
-                if(a2 === 'p' || a2 === 'g'){     //pick up 2
+                if(card.getNumber() === 'p' || card.getNumber() === 'g'){     //pick up 2
                     this.takeCard(unoClientNext);
                     this.takeCard(unoClientNext);
                 }            
-                if(a2 === 'n' || a2 === 'p' || a2 === 'g'){     //skip
+                if(card.getNumber() === 'n' || card.getNumber() === 'p' || card.getNumber() === 'g'){     //skip
                     unoClientNext = this.getNextClient(unoClientNext);
                 }           
-                if(a2 === 'r'){     //reverse direction
+                if(card.getNumber() === 'r'){     //reverse direction
                     this.direction = !this.direction;
                     unoClientNext = this.getNextClient(unoClient);
                 }                                  
@@ -147,6 +158,8 @@ module.exports = class GameRulesModel{
 
                     unoClient.setHasWon(true);                          
                     UNOClient.calculateScores(this.clientRepository.findAll());
+
+                    this.shuffleDeck();
                 }
             }
         }else{            
@@ -156,91 +169,121 @@ module.exports = class GameRulesModel{
                 unoClientNext.setTurn(true);
             }
         }
+        this.validateNextMove();
     }
-    cardCanBePlaced(card){
-        let current = this.discardDeck.slice(-1)[0];
-        if(typeof current === 'undefined')return false;
-
-        let a1 = card.charAt(0);
-        let a2 = card.charAt(1);
-        let b1 = current.charAt(0);
-        let b2 = current.charAt(1);
-
-        //Check if card is allowed
-        if(a2 === 'g'       //kg (rg,yg,bg,gg)
-            || a2 === 'c'   //kc (rc,yc,bc,gc)
-            || a1 === b1
-            || a2 === b2){
-
-                return true;
-        }
-        return false;
-    }
-    place(unoClient, card){
+    place(unoClient, cardData){
 
         if(!unoClient.getTurn())return false;
 
-        if(unoClient.getTakeOrLeave()){
-            //TODO check if card === unoClient.getTakeOrLeave()
-        }
+        if(typeof cardData.id !== 'undefined'){
 
-        let current = this.discardDeck.slice(-1)[0];
-        if(typeof current === 'undefined')return;
+            let card = this.cardRepository.findById(cardData.id);
 
-        let a1 = card.charAt(0);
-        let a2 = card.charAt(1);
-        let b1 = current.charAt(0);
-        let b2 = current.charAt(1);
+            if(card instanceof Card){
+                
+                let numb = cardData.type.charAt(1);
+                if((card.getType() === 'kg' || card.getType() === 'kc') && (numb === 'g' || numb === 'c')){
+                    card.setType(cardData.type);
+                }
 
-        //Check if card is allowed
-        if(this.cardCanBePlaced(card)){
+                if(unoClient.getTakeOrLeave()){
+                    //TODO check if card === unoClient.getTakeOrLeave()
+                }
+                
+                this.clearEvents();
 
-            //Remove card from players hand and place it into discard deck
-            let clientCard = card;
-            if(a2 == 'g'){
-                clientCard = 'kg';
-            }
-            if(a2 == 'c'){
-                clientCard = 'kc';
-            }            
-            if(unoClient.getTakeOrLeave() || unoClient.takeCard(clientCard)){
-                this.discardDeck.push(card);
-                this.finishTurn(unoClient, card);
+                //Check if card is allowed
+                if(this.cardCanBePlaced(card)){
+                    
+                    //unoClient.getTakeOrLeave() || 
+
+                    if(unoClient.removeCard(card)){
+                        this.placeCard(card);
+                        this.finishTurn(unoClient, card);
+                    }
+                }
             }
         }
     }
     take(unoClient){
 
         if(unoClient.getTurn()){
+            
+            this.clearEvents();
 
             if(unoClient.getTakeOrLeave()){
-                unoClient.addCard(unoClient.getTakeOrLeave());
                 this.finishTurn(unoClient);
                 return;
             }
-            
-            let card = this.drawDeck.shift();
 
-            if(this.drawDeck.length == 0){
-                this.reShuffleDeck();
-            }
+            let card = this.takeCard(unoClient);
 
             if(this.cardCanBePlaced(card) && !unoClient.getTakeOrLeave()){
                 unoClient.setTakeOrLeave(card);
             }else{
-                unoClient.addCard(card);
                 this.finishTurn(unoClient);
             }
+            if(this.drawDeck.length == 0){
+                this.reShuffleDeck();
+            }
         }
-    }
+    }    
     takeCard(unoClient){
         //Check for empty draw deck
-        unoClient.addCard(this.drawDeck.shift());
+        let card = this.drawDeck.pop();
+        card.setMoveId(this.incrementMoveIndex());
+        this.saveEvent(card, unoClient.getName());
+        unoClient.addCard(card);
+        return card;
     }
+    placeCard(card){
+        card.setMoveId(this.incrementMoveIndex());
+        card.setOwner("dsc");
+        this.saveEvent(card, "dsc");
+        this.discardDeck.push(card);
+    }
+    incrementMoveIndex(){
+        this.moveIndex++;
+        return this.moveIndex;
+    }
+    saveEvent(card, owner){
+        this.events.unshift({
+            cardId: card.getId(),
+            newOwner: owner
+        });
+    }
+    clearEvents(){
+        this.events = []
+    }
+    getEvents(){
+        return this.events;
+    }    
     getDrawDeckCount(){
         return this.drawDeck.length;
     }
     getDiscardDeck(){
         return this.discardDeck;
+    }
+    validateNextMove(){
+
+        Card.setArrayNextMoveValid(this.cardRepository.findAll(), false);
+
+        let client = this.clientRepository.findByTurn(true);
+        if(client instanceof UNOClient){
+            let cards = client.getCards();
+            for(let i=0; i<cards.length; i++){
+                if(this.cardCanBePlaced(cards[i])){
+                    cards[i].setNextMoveValid(true);
+                }
+            }
+        }        
+
+        let card = this.drawDeck.slice(-1)[0];
+        if(card instanceof Card){
+            card.setNextMoveValid(true);
+        }
+    }
+    getCardRepository(){
+        return this.cardRepository;
     }
 };

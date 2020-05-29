@@ -46,13 +46,17 @@
         background: linear-gradient(to bottom, rgba(252,234,187,1) 0%, rgba(252,205,77,1) 61%, rgba(248,181,0,1) 62%, rgba(251,223,147,1) 100%);
         background-clip: text;
         -webkit-text-fill-color: transparent;
+        opacity: 0.6;
+    }
+    .client-name.active{
+        opacity: 1;
     }
     .client-name span{
         line-height: 25px;
-        border-bottom:solid 4px rgba(252,205,77,.3);
-        padding-left: 30px;
-        padding-right: 30px;
-        border-radius: 7px;
+        /*border-bottom:solid 4px rgba(252,205,77,.3);*/
+        padding-left: 40px;
+        padding-right: 40px;
+        border-bottom: none;
     }
     .hand-cards-transform{
         position: absolute;

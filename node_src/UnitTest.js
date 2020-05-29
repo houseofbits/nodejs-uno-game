@@ -1,7 +1,7 @@
 let ClientRepository = require('./UNO/UNOClientRepository.js');
 let Client = require('./Client.js');
 let UNOClient = require('./UNO/UNOClient.js');
-let GameRulesModel2 = require('./UNO/GameRulesModel2.js');
+let GameRulesModel = require('./UNO/GameRulesModel.js');
 
 const assert = require('assert');
 
@@ -57,7 +57,7 @@ module.exports = class UnitTest{
         repo.insert(new UNOClient("Rainis"));
         repo.insert(new UNOClient("Dace"));
 
-        let gm = new GameRulesModel2(repo);
+        let gm = new GameRulesModel(repo);
 
         gm.init();
 

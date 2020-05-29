@@ -20,7 +20,7 @@
 <script>
 
     import Popup from "../common/Popup"
-    import CardTemplate from "../components/Card"
+    import CardTemplate from "../components/CardTemplate"
 
     export default {
         name: "PopupSpecial",

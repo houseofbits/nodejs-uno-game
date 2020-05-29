@@ -1,11 +1,10 @@
 <template>
     <div class="frame">
+        
         <Authorize :client="state.client" :socket="socket"></Authorize>
 
-        <Board v-if="state.client.code">
-            
+        <Board v-if="state.client.code">            
             <Scores :clients="state.clients"></Scores>
-
             <Card v-for="card in state.game.cards" 
                     :ref="'card'+card.id"
                     :card="card"
@@ -18,79 +17,68 @@
             <div v-if="config.playersInitialized" >
                 <NamePlate v-for="(client, index) in state.clients" :key="'client_'+index" :client="client" :position="namePosition(client.name)"></NamePlate>
             </div>
-
         </Board>
         <div class="board-overlay" v-if="overlayVisible">
-
             <PopupReady v-if="!state.game.winner && !state.game.ready" :buttonHandler="ready" :showButton="!state.client.ready"></PopupReady>
-
             <PopupWon v-if="state.game.winner" :buttonHandler="ready" :winner="state.game.winner" :showButton="!state.client.ready"></PopupWon>
-
             <PopupSpecial v-if="config.specialCard" :clickHandler="playCardSpecial" :card="config.specialCard"></PopupSpecial>
-
             <PopupTake v-if="!config.specialCard && state.client.takeOrLeave" :card="state.client.takeOrLeave" :takeHandler="takeCard" :leaveHandler="playCardTOL"></PopupTake>
-
         </div>
     </div>
 </template>
 
 <script>
-
-    import socket from 'socket.io-client'
-    import Authorize from "./components/Authorize"
+    
     import Board from "./components/Board"
-    import Card from "./comp2/Card"    
+    import Card from "./components/Card"    
     import PopupReady from "./components/PopupReady"    
     import PopupWon from "./components/PopupWon"    
     import PopupSpecial from "./components/PopupSpecial"    
     import PopupTake from "./components/PopupTake"   
-    import NamePlate from "./comp2/NamePlate"    
-    import Scores from "./components/Scores"   
+    import NamePlate from "./components/NamePlate"    
+    import Scores from "./components/Scores"
+    import Authorize from "./components/Authorize"   
 
-    import testDataNew from "../public/testDataNew.json"
+    //import testDataNew from "../public/testDataNew.json"
 
-    import gsap from "gsap";
+    import ConfigMixin from "./mixins/Config"   
+    import ClientMixin from "./mixins/Client"   
 
     const OWNER_DRAW_DECK = "draw"
     const OWNER_DISCARD_DECK = "dsc"    
 
     export default {
-        name: "unoApp",
+        name: "UnoGame",
+        props: {
+            socket: { type: Object },
+        },
+        mixins: [
+            ConfigMixin, 
+            ClientMixin
+        ],
+        components: {
+            Board, 
+            Card, 
+            Authorize, 
+            PopupReady, 
+            PopupWon,
+            PopupSpecial,
+            PopupTake,
+            NamePlate,
+            Scores
+        },            
         data: function() {
             return {
-                socket: socket('http://localhost:3000'),
                 state:{
-                    client:{
-                        name:'',
-                        code:null
-                    },
                     clients:[],
                     game:{
                         cards:[],
                         events:[]
                     },
-                },
-                config:{
-                    initialized:false,
-                    playersInitialized:false,
-                    drawPos:{x:200,y:170},
-                    discardPos:{x:400,y:170},
-                    players:{},
-                    timeline:null,
-                    specialCard:false,
-                },
+                }
             }
         },
-        components: {
-            Board, Card, Authorize, PopupReady, PopupWon,PopupSpecial,PopupTake,NamePlate,Scores
-        },
         computed:{
-            self:function(){
-                return this.state.client.name;
-            },
-            selfConfig:function(){
-                return this.config.players[this.state.client.name];
-            },
             overlayVisible:function(){
                 return this.state.client.code 
                     && ((!this.state.game.winner && !this.state.game.ready) 
@@ -100,27 +88,7 @@
                     ); 
             }            
         },
-        methods:{        
-            namePosition:function(clientName){
-                if(typeof this.config.players[clientName] !== 'undefined'){  
-                    let pos = this.config.players[clientName];              
-                    if(clientName === this.self){
-                        return {
-                            x:pos.x,
-                            y:pos.y + 155
-                        };
-                    }else{
-                        return {
-                            x:pos.x,
-                            y:pos.y + 120
-                        };
-                    }
-                }
-            },              
-            ready:function () {
-                this.state.client.ready = true;
-                this.socket.emit('begin', {'client': this.state.client});
-            },  
+        methods:{                     
             playCard:function(card){
                 if(card.type === 'kc' || card.type === 'kg'){
                     this.config.specialCard = card;
@@ -171,7 +139,7 @@
                 card.transform.x = this.config.drawPos.x + (5 - (Math.random()*10));
                 card.transform.y = this.config.drawPos.y + (5 - (Math.random()*10));
                 card.transform.angle = (5 - (Math.random()*10));
-                card.transform.z = 150 + card.moveId;
+                card.transform.z = 150 + parseInt(card.moveId);
                 card.transform.scale = 1;
                 card.transform.d = 0;
             },
@@ -293,28 +261,6 @@
                     posZ++;
                 }
             },            
-            initPlayers:function(){                
-                this.config.players = {};
-                let count = this.state.clients.length - 1;
-                let marg = 800 / count;
-                let index = 0;
-                for(let i=0; i<this.state.clients.length; i++){
-                    if(this.state.clients[i].name == this.self){
-                        this.config.players[this.state.clients[i].name] = {
-                            x:400,
-                            y:340,
-                            scale:1
-                        };
-                    }else{
-                       this.config.players[this.state.clients[i].name] = {
-                            x:((marg / 2) + (index * marg)),
-                            y:-20,
-                            scale:0.6
-                        };
-                        index++;
-                    }
-                }
-            },
             processEvents:function(){
                 for(let i=0; i<this.state.game.events.length; i++){
                     let event = this.state.game.events[i];
@@ -337,6 +283,8 @@
             },
             gameStateResponse(response){
 
+                //console.log(response);
+
                 this.state.client = response.client;
 
                 this.state.clients = response.clients;
@@ -352,7 +300,7 @@
                 }else if(this.config.initialized && response.game.events.length > 0){
                     if(!this.config.playersInitialized){
                         this.config.playersInitialized = true;
-                        this.initPlayers();
+                        this.initClientsConfig(this.state.clients);
                     }                    
                     this.processEvents();                    
                 }
@@ -363,8 +311,6 @@
         mounted:function () {
 
             this.socket.on('state', this.gameStateResponse);
-
-            this.config.timeline = gsap.timeline();
 
             //this.gameStateResponse(testDataNew);
 
@@ -390,20 +336,4 @@
         height:100%;
         transform: translateZ(500px);
     }
-</style>
-
-<style>
-    body {
-        background: #1b1b21 url('../public/img/page_bg.png') repeat-x;
-        margin:0 auto;
-        width:100%;
-        font: 12px normal Verdana, Arial, Helvetica, sans-serif;
-        user-select: none;
-        overflow: hidden;
-        transform: scale(1.0);
-    }
-    a{
-        text-decoration:none;
-        color:inherit;
-    }   
 </style>
