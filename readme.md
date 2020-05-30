@@ -11,5 +11,5 @@ node server.js
 ``` 
 Or, to run dockerised Node.js app accessible in your local network
 ``` 
-docker-compose up -d
+docker-compose up
 ```
