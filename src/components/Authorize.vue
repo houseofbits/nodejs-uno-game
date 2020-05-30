@@ -14,7 +14,7 @@
 
 <script>
 
-    import Button from "../common/Button"
+    import Button from "./Button"
 
     export default {
         name: "Authorize",

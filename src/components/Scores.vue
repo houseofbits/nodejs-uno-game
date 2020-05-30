@@ -40,7 +40,7 @@
         position: absolute;
         width:250px;
         height:150px;
-        left:400px;
+        right:20px;
         top:220px;
         transform: rotateZ(3deg);
     }

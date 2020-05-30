@@ -18,9 +18,9 @@
 
 <script>
 
-    import Popup from "../common/Popup"
+    import Popup from "./Popup"
     import CardTemplate from "./CardTemplate" 
-    import Button from "../common/Button"
+    import Button from "./Button"
 
     export default {
         name: "PopupTake",

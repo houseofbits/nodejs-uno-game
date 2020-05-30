@@ -18,10 +18,10 @@ export default {
           screenWidth:null,
           screenHeight:null,
           opponentPosOffset:{
-            1:[0],
-            2:[0,0],
-            3:[100,0,100],  
-            4:[100,0,100,0]              
+            1:[20],
+            2:[20,20],
+            3:[110,20,110],  
+            4:[110,20,110,20]              
           }
       }
     }
@@ -33,7 +33,7 @@ export default {
           if(clientName === this.self){
               return {
                   x:pos.x,
-                  y:pos.y + 155
+                  y:pos.y + 170
               };
           }else{
               return {
@@ -53,8 +53,8 @@ export default {
           if(clients[i].name == this.self){
               this.config.players[clients[i].name] = {
                   x:(this.config.boardWidth * 0.5),
-                  y:this.config.boardHeight - 210,
-                  scale:1
+                  y:this.config.boardHeight - 220,
+                  scale:1.2
               };
           }else{
              this.config.players[clients[i].name] = {
@@ -73,8 +73,8 @@ export default {
     this.config.screenHeigh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
     this.config.boardWidth = Math.min(600, this.config.screenWidth);
     this.config.boardHeight = 800;
-    this.config.drawPos.y = (this.config.boardHeight * 0.5) - 80;
-    this.config.discardPos.y = (this.config.boardHeight * 0.5) - 60;
+    this.config.drawPos.y = (this.config.boardHeight * 0.5) - 60;
+    this.config.discardPos.y = (this.config.boardHeight * 0.5) - 80;
     this.config.scoresPos.y = (this.config.boardHeight * 0.5) - 60;
   }
 }

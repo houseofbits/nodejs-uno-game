@@ -12,8 +12,8 @@
 
 <script>
 
-    import Popup from "../common/Popup"
-    import Button from "../common/Button"
+    import Popup from "./Popup"
+    import Button from "./Button"
 
     export default {
         name: "PopupReady",

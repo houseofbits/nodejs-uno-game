@@ -209,7 +209,7 @@
 
                 let config = this.config.players[player];
 
-                let scale = (player === this.self)?1:this.config.opponentCardScale;
+                let scale = (player === this.self)?1.2:this.config.opponentCardScale;
 
                 let pivotSetting = (player === this.self)?400:200;
 
@@ -275,12 +275,14 @@
             updateState:function(cards){
                 for(let i=0; i<this.state.game.cards.length; i++){
                     if(typeof cards[i] === 'undefined')continue;
+                    this.state.game.cards[i].moveId = cards[i].moveId;    
+
                     if(cards[i].owner !== this.state.game.cards[i].owner){
                         this.cardSetOwner(this.state.game.cards[i], cards[i].owner);
                     }
+
                     this.state.game.cards[i].owner = cards[i].owner;
                     this.state.game.cards[i].type = cards[i].type;    
-                    this.state.game.cards[i].moveId = cards[i].moveId;    
                     this.state.game.cards[i].nextMoveValid = cards[i].nextMoveValid;                    
                 }
             },
@@ -304,8 +306,8 @@
                     if(!this.config.playersInitialized){
                         this.config.playersInitialized = true;
                         this.initClientsConfig(this.state.clients);
-                    }                    
-                    this.processEvents();                    
+                    }              
+                    this.processEvents();
                 }
                 this.updateState(response.game.cards);
                 this.updateDiscardDeck();

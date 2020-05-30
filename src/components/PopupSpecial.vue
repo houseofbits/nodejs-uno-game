@@ -19,7 +19,7 @@
 
 <script>
 
-    import Popup from "../common/Popup"
+    import Popup from "./Popup"
     import CardTemplate from "../components/CardTemplate"
 
     export default {
