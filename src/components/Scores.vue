@@ -1,8 +1,8 @@
 <template>
-    <div class="scores">
+    <div class="scores" :style="{left:position.x+'px', top:position.y+'px'}">
         <div class="column" v-for="(client,index) in clients" :key="index">
             <div class="cell">{{client.name}}</div>
-            <div class="cell" v-for="(score,ind2) in client.score" :key="ind2">{{score}}</div>
+            <div class="cell" v-for="(score,ind2) in client.score" :key="ind2"><i class='far' :class="scoreClass(score, index)"></i>{{scoreVal(score)}}</div>
         </div>
     </div>
 </template>
@@ -10,7 +10,28 @@
 <script>
     export default {
         name: "Popup",
-        props:['clients'],
+        props:['clients', 'position'],
+        methods:{
+            scoreClass:function(score, index){
+                let smileys = [
+                    "fa-smile",
+                    "fa-grin-squint",
+                    "fa-grin-beam",
+                    "fa-laugh-squint",
+                    "fa-smile-beam",
+                    "fa-laugh",
+                    "fa-laugh-beam"
+                ];
+                if(score === '-'){
+                    return smileys[index];
+                }
+                return null;
+            },
+            scoreVal:function(score){
+                if(score === '-')return '';
+                return score;
+            }
+        }
     }
 </script>
 
@@ -19,13 +40,13 @@
         position: absolute;
         width:250px;
         height:150px;
-        left:500px;
-        top:160px;
+        left:400px;
+        top:220px;
         transform: rotateZ(3deg);
     }
     .column{
         position:relative;
-        width:60px;
+        width:45px;
         height:100%;
         float:left;
         border-left:solid 1px white;

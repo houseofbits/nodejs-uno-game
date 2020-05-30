@@ -4,13 +4,25 @@ export default {
   data: function () {
     return {
         config:{
-        initialized:false,
-        playersInitialized:false,
-        drawPos:{x:200,y:170},
-        discardPos:{x:400,y:170},
-        players:{},
-        timeline:null,
-        specialCard:false,
+          boardWidth:600,
+          boardHeight:650,
+          initialized:false,
+          playersInitialized:false,
+          drawPos:{x:150,y:240},
+          discardPos:{x:300,y:210},
+          scoresPos:{x:370,y:210},          
+          players:{},
+          timeline:null,
+          specialCard:false,
+          opponentCardScale:0.5,
+          screenWidth:null,
+          screenHeight:null,
+          opponentPosOffset:{
+            1:[0],
+            2:[0,0],
+            3:[100,0,100],  
+            4:[100,0,100,0]              
+          }
       }
     }
   },
@@ -30,24 +42,25 @@ export default {
               };
           }
       }
-    },  
+    },
     initClientsConfig:function(clients){                
       this.config.players = {};
       let count = clients.length - 1;
-      let marg = 800 / count;
+      let marg = this.config.boardWidth / count;
       let index = 0;
+      let offsets = this.config.opponentPosOffset[count];
       for(let i=0; i<clients.length; i++){
           if(clients[i].name == this.self){
               this.config.players[clients[i].name] = {
-                  x:400,
-                  y:340,
+                  x:(this.config.boardWidth * 0.5),
+                  y:this.config.boardHeight - 210,
                   scale:1
               };
           }else{
              this.config.players[clients[i].name] = {
                   x:((marg / 2) + (index * marg)),
-                  y:-20,
-                  scale:0.6
+                  y:offsets[index],
+                  scale: this.config.opponentCardScale
               };
               index++;
           }
@@ -56,5 +69,12 @@ export default {
   },
   mounted:function(){
     this.config.timeline = gsap.timeline();
+    this.config.screenWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    this.config.screenHeigh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    this.config.boardWidth = Math.min(600, this.config.screenWidth);
+    this.config.boardHeight = 800;
+    this.config.drawPos.y = (this.config.boardHeight * 0.5) - 80;
+    this.config.discardPos.y = (this.config.boardHeight * 0.5) - 60;
+    this.config.scoresPos.y = (this.config.boardHeight * 0.5) - 60;
   }
 }

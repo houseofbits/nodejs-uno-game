@@ -1,10 +1,9 @@
 <template>
-    <div class="frame">
-        
+    <div class="frame" :style="{width:config.boardWidth+'px', height:config.boardHeight+'px'}">
         <Authorize :client="state.client" :socket="socket"></Authorize>
 
         <Board v-if="state.client.code">            
-            <Scores :clients="state.clients"></Scores>
+            <Scores :clients="state.clients" :position="config.scoresPos"></Scores>
             <Card v-for="card in state.game.cards" 
                     :ref="'card'+card.id"
                     :card="card"
@@ -14,16 +13,16 @@
                     :timeline="config.timeline"
                     :active="state.client.turn"></Card>
 
-            <div v-if="config.playersInitialized" >
+            <div v-if="config.playersInitialized && !state.game.winner && state.game.ready" >
                 <NamePlate v-for="(client, index) in state.clients" :key="'client_'+index" :client="client" :position="namePosition(client.name)"></NamePlate>
-            </div>
+            </div>            
         </Board>
         <div class="board-overlay" v-if="overlayVisible">
             <PopupReady v-if="!state.game.winner && !state.game.ready" :buttonHandler="ready" :showButton="!state.client.ready"></PopupReady>
             <PopupWon v-if="state.game.winner" :buttonHandler="ready" :winner="state.game.winner" :showButton="!state.client.ready"></PopupWon>
             <PopupSpecial v-if="config.specialCard" :clickHandler="playCardSpecial" :card="config.specialCard"></PopupSpecial>
             <PopupTake v-if="!config.specialCard && state.client.takeOrLeave" :card="state.client.takeOrLeave" :takeHandler="takeCard" :leaveHandler="playCardTOL"></PopupTake>
-        </div>
+        </div>        
     </div>
 </template>
 
@@ -39,7 +38,7 @@
     import Scores from "./components/Scores"
     import Authorize from "./components/Authorize"   
 
-    //import testDataNew from "../public/testDataNew.json"
+    import testDataNew from "../public/testDataNew.json"
 
     import ConfigMixin from "./mixins/Config"   
     import ClientMixin from "./mixins/Client"   
@@ -210,17 +209,21 @@
 
                 let config = this.config.players[player];
 
-                let scale = (player === this.self)?1:0.6;
+                let scale = (player === this.self)?1:this.config.opponentCardScale;
 
                 let pivotSetting = (player === this.self)?400:200;
 
+                let angleRangeDiv = (player === this.self)?7:9;
+                let maxAngle = (player === this.self)?50:35;
+
                 let cardsCount = clientCards.length;
-                let angleRange = (cardsCount * 30) / 7;
-                angleRange = Math.min(angleRange, 50);
+                let angleRange = (cardsCount * 30) / angleRangeDiv;
+                angleRange = Math.min(angleRange, maxAngle);
+
                 let angleMin = -(angleRange / 2);
                 let angleMax = (angleRange / 2);
                 let angleStep = (angleMax - angleMin) / (cardsCount - 1);
-                let angle = angleMin;     
+                let angle = angleMin;
 
                 let posZ = 50;
 
@@ -327,7 +330,6 @@
         top:5px;
         position:relative;
         width:800px;
-        height:540px;
         margin:0 auto;    
     }
     .board-overlay{

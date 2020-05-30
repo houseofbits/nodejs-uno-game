@@ -14,8 +14,8 @@ application.get('/', function(request, response){
 });
 application.use('/client', express.static(__dirname + '/client'));
 
-server.listen(3000);
-//server.listen(80);
+//server.listen(3000);
+server.listen(80);
 
 console.log('============= Server started ===============');
 
