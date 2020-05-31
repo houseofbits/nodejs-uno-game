@@ -46,7 +46,7 @@
     }
     .column{
         position:relative;
-        width:45px;
+        width:55px;
         height:100%;
         float:left;
         border-left:solid 1px white;
