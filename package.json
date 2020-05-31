@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "repository": "https://github.com/houseofbits/nodejs-uno-game",
   "scripts": {
     "build": "vue-cli-service build --mode=development",
     "serve": "vue-cli-service serve"
@@ -11,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
-    "animejs": "^3.2.0",
     "express": "^4.17.1",
     "gsap": "^3.2.6",
     "socket.io": "^2.3.0",
