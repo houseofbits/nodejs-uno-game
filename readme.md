@@ -1,6 +1,6 @@
 **Multiplayer UNO game with Node.js and Vue**
 
-![Screenshot](https://github.com/houseofbits/nodejs-uno-game/dev-screen.png)
+![Screenshot](https://raw.githubusercontent.com/houseofbits/nodejs-uno-game/master/dev-screen.png)
 
 [Check out YouTube video](https://www.youtube.com/watch?v=HPbMh1QAxb4)
 
